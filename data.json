@@ -1,0 +1,23 @@
+[
+    ["Pyrax", 120, "feu", [["Flamme ardente", 45], ["Soin brûlant", 20]], "eau"],
+    ["Aqualis", 110, "eau", [["Vague écrasante", 40], ["Écume curative", 25]], "plante"],
+    ["Terrak", 130, "terre", [["Coup de roche", 42], ["Bouclier naturel", 18]], "vent"],
+    ["Zephyro", 100, "vent", [["Lame d’air", 48], ["Souffle vital", 22]], "foudre"],
+    ["Cryonos", 140, "glace", [["Éclat givré", 44], ["Brise glaciale", 15]], "feu"],
+    ["Voltaz", 115, "foudre", [["Éclair rapide", 46], ["Recharge", 20]], "terre"],
+    ["Floralis", 125, "plante", [["Fouet végétal", 43], ["Photosynthèse", 25]], "feu"],
+    ["Ferros", 135, "métal", [["Coup d’acier", 45], ["Réparation", 20]], "feu"],
+    ["Noctis", 110, "ténèbres", [["Griffe obscure", 47], ["Ombre apaisante", 18]], "lumière"],
+    ["Solari", 120, "lumière", [["Rayon sacré", 44], ["Lumière curative", 20]], "ténèbres"],
+    ["Lavadra", 125, "feu", [["Crachin de lave", 42], ["Chaleur réconfortante", 22]], "eau"],
+    ["Mistralix", 105, "vent", [["Tornade", 45], ["Brise régénérante", 20]], "glace"],
+    ["Aquilon", 130, "glace", [["Souffle polaire", 41], ["Cristaux purs", 23]], "feu"],
+    ["Voltorn", 120, "foudre", [["Orage brutal", 47], ["Énergie statique", 18]], "plante"],
+    ["Verdalis", 110, "plante", [["Griffe racine", 40], ["Sève guérisseuse", 25]], "feu"],
+    ["Ferrok", 140, "métal", [["Coup tranchant", 46], ["Forge vivante", 15]], "terre"],
+    ["Tenebris", 115, "ténèbres", [["Hurlement noir", 43], ["Repos obscur", 20]], "lumière"],
+    ["Luminae", 125, "lumière", [["Éclat divin", 42], ["Aura sacrée", 22]], "ténèbres"],
+    ["Rochorn", 135, "terre", [["Éboulement", 44], ["Armure rocheuse", 18]], "plante"],
+    ["Abyssor", 120, "eau", [["Torrent abyssal", 45], ["Ondes apaisantes", 20]], "foudre"],
+    ["Dave", 170, "terre", [["Ping", 50], ["Nein", 1]], "eau"]
+]
