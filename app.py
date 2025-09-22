@@ -1,70 +1,65 @@
+# app.py
 from flask import Flask, render_template, request, redirect, url_for
 from main import Jeu
 
 app = Flask(__name__)
-Partie = None
-tour_actuel = "J1"
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+jeu = Jeu()  # instance vide jusqu'au start
+started = False
 
 @app.route("/", methods=["GET", "POST"])
 def start():
-    global Partie, tour_actuel
+    global jeu, started
     if request.method == "POST":
-        pseudo1 = request.form["pseudo1"]
-        pseudo2 = request.form["pseudo2"]
-        Partie = Jeu()
-        Partie.initialiser(pseudo1, pseudo2)
-        tour_actuel = "J1"
+        p1 = request.form.get("pseudo1") or "J1"
+        p2 = request.form.get("pseudo2") or "J2"
+        jeu = Jeu()
+        jeu.initialiser(p1, p2)
+        started = True
         return redirect(url_for("game"))
     return render_template("start.html")
 
 @app.route("/game")
 def game():
-    gagnant = Partie.gagnant() if Partie else None
-    return render_template("game.html",
-                           j1=Partie.J1,
-                           j2=Partie.J2,
-                           tour=tour_actuel,
-                           gagnant=gagnant)
+    if not started:
+        return redirect(url_for("start"))
+    state = jeu.get_state()
+    return render_template("game.html", state=state)
 
-@app.route("/action/<joueur>/<int:choix>")
-def action(joueur, choix):
-    global tour_actuel
-    if Partie.est_fini():
+@app.route("/action", methods=["POST"])
+def action():
+    if not started:
+        return redirect(url_for("start"))
+    player = request.form.get("player")  # "J1" or "J2"
+    action = int(request.form.get("action", 0))
+    # if action == 3 (change) we prefer to redirect to choose page for that player
+    if action == 3 and 'choix_index' not in request.form:
+        # go to choose page
+        return redirect(url_for("choose", player=player))
+    choix_index = request.form.get("choix_index")
+    choix_index = int(choix_index) if choix_index is not None and choix_index != "" else None
+
+    res = jeu.play_action(player, action, choix_index)
+    if res.get("status") == "need_choice":
+        # redirect owner to choose replacement
+        who = res.get("who_needs_choice")
+        return redirect(url_for("choose", player=who))
+    return redirect(url_for("game"))
+
+@app.route("/choose/<player>", methods=["GET", "POST"])
+def choose(player):
+    if not started:
+        return redirect(url_for("start"))
+    # player is 'J1' or 'J2' who must choose a replacement
+    if request.method == "POST":
+        idx = int(request.form.get("index"))
+        res = jeu.submit_replacement(player, idx)
         return redirect(url_for("game"))
-
-    if joueur == "J1" and tour_actuel == "J1":
-        Partie.J1.action(choix, Partie.J2)
-        if Partie.J2.est_ko():
-            Partie.J2.retirer_pokemon()
-        tour_actuel = "J2"
-
-    elif joueur == "J2" and tour_actuel == "J2":
-        Partie.J2.action(choix, Partie.J1)
-        if Partie.J1.est_ko():
-            Partie.J1.retirer_pokemon()
-        tour_actuel = "J1"
-
-    return redirect(url_for("game"))
-
-@app.route("/choix/<joueur>")
-def choix(joueur):
-    # Page de sélection de Pokémon
-    if joueur == "J1":
-        vivants = [poke for poke in Partie.J1.pokemon if poke[1] > 0]
-    else:
-        vivants = [poke for poke in Partie.J2.pokemon if poke[1] > 0]
-    return render_template("choix.html", joueur=joueur, vivants=vivants)
-
-@app.route("/choisir/<joueur>/<int:index>")
-def choisir(joueur, index):
-    global tour_actuel
-    if joueur == "J1" and tour_actuel == "J1":
-        Partie.J1.choix_pokemon(index)
-        tour_actuel = "J2"
-    elif joueur == "J2" and tour_actuel == "J2":
-        Partie.J2.choix_pokemon(index)
-        tour_actuel = "J1"
-    return redirect(url_for("game"))
+    # GET: build list of alive pokemons for that player
+    player_obj = jeu.J1 if player == "J1" else jeu.J2
+    vivants = [ (i, p) for i, p in enumerate(player_obj.pokemons) if p[1] > 0 ]
+    return render_template("choose.html", player_label=player, vivants=vivants, player_name=player_obj.nom)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,15 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Démarrer la partie</title>
+  <meta charset="utf-8">
+  <title>Start - PokeDave</title>
+  <style>
+    body{font-family: Arial; padding:40px; text-align:center;}
+    input{padding:8px; margin:8px;}
+    button{padding:10px 16px;}
+  </style>
 </head>
 <body>
-  <h1>Choisissez vos pseudos</h1>
-  <form method="POST">
-    Joueur 1: <input type="text" name="pseudo1" required><br>
-    Joueur 2: <input type="text" name="pseudo2" required><br>
-    <button type="submit">Commencer</button>
+  <h1>Bienvenue dans PokeDave</h1>
+  <form method="post">
+    <div>
+      <label>Joueur 1 : <input type="text" name="pseudo1" required></label>
+    </div>
+    <div>
+      <label>Joueur 2 : <input type="text" name="pseudo2" required></label>
+    </div>
+    <button type="submit">Démarrer</button>
   </form>
 </body>
 </html>
