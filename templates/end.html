@@ -1,43 +1,20 @@
-<!DOCTYPE html>
+<!-- templates/end.html -->
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Fin de la partie</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .card {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    h1 {
-      color: #333;
-    }
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #4CAF50;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-    }
-  </style>
+  <meta charset="utf-8">
+  <title>Fin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-  <div class="card">
-    <h1>🎉 Bravo {{ winner }} 🎉</h1>
-    <p>Vous avez gagné la partie !</p>
-    <a href="/">Rejouer</a>
-  </div>
+<body class="bg">
+  <main class="center">
+    <div class="card small">
+      <h1>🎉 Bravo {{ winner }} ! 🎉</h1>
+      <p>Tu as gagné la partie.</p>
+      <div style="margin-top:12px;">
+        <a class="btn primary" href="{{ url_for('index') }}">Rejouer</a>
+      </div>
+    </div>
+  </main>
 </body>
 </html>

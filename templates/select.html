@@ -1,0 +1,44 @@
+<!-- templates/select.html -->
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Choisir Pokémon</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg">
+  <main class="center narrow">
+    <h2>Choix pour {{ player_name }}</h2>
+
+    {% if replacement %}
+      <p class="info">Un de vos Pokémon est K.O. Choisissez un remplaçant :</p>
+    {% elif voluntary %}
+      <p class="info">Changer de Pokémon volontairement :</p>
+    {% else %}
+      <p class="info">Choisissez votre Pokémon de départ :</p>
+    {% endif %}
+
+    <form method="post">
+      <div class="choices">
+        {% for idx, p in choices %}
+          <label class="choice-card">
+            <input type="radio" name="index" value="{{ idx }}" {% if loop.first %}checked{% endif %}>
+            <div class="choice-body">
+              <div class="pname">{{ p.name }}</div>
+              <div class="ptype">Type: {{ p.type }}</div>
+              <div class="pstat">PV: {{ p.hp }} / {{ p.max_hp }}</div>
+              <div class="pmoves">Atk: {{ p.moves[0].name }} ({{ p.moves[0].power }}) • Heal: {{ p.moves[1].name }} (+{{ p.moves[1].power }})</div>
+              <div class="pweak">Faiblesse: {{ p.weakness }}</div>
+            </div>
+          </label>
+        {% endfor %}
+      </div>
+
+      <div style="margin-top:18px;">
+        <button class="btn primary" type="submit">Valider</button>
+        <a class="btn outline" href="{{ url_for('game') }}">Annuler</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!-- templates/index.html -->
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>PokeDave - Accueil</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg">
+  <main class="center">
+    <h1>PokeDave</h1>
+    <p class="lead">Entrez les pseudos des deux joueurs</p>
+
+    <form action="{{ url_for('start') }}" method="post" class="form">
+      <input name="pseudo1" placeholder="Pseudo joueur 1" required>
+      <input name="pseudo2" placeholder="Pseudo joueur 2" required>
+      <div class="row">
+        <button class="btn primary" type="submit">Commencer</button>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

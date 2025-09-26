@@ -1,118 +1,103 @@
+<!-- templates/game.html -->
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<title>Combat - PokeDave</title>
-<style>
-  body{font-family: Arial; margin:0; padding:20px; background:#f2f4f8;}
-  .wrap{display:flex; justify-content:space-between; gap:20px; height:calc(100vh - 40px);}
-  .card{width:45%; background:white; border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,0.06); box-sizing:border-box; display:flex; flex-direction:column; align-items:center;}
-  .center-space{width:10%; display:flex; align-items:center; justify-content:center; color:#888;}
-  .pokemon-box{width:180px; height:180px; border:3px solid #222; display:flex; align-items:center; justify-content:center; margin-bottom:12px; background:white;}
-  .stats{width:100%; text-align:left;}
-  .actions{margin-top:12px;}
-  .actions form{display:flex; flex-direction:column; gap:8px; align-items:center;}
-  button{padding:10px 14px; border-radius:8px; border:none; cursor:pointer;}
-  .atk{background:#e05555; color:white;}
-  .heal{background:#4CAF50; color:white;}
-  .chg{background:#2196F3; color:white;}
-  .winner{background:#dff0d8; padding:10px; border-radius:8px; text-align:center; margin-bottom:12px;}
-</style>
+  <meta charset="utf-8">
+  <title>PokeDave - Combat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-  {% set j1 = state.j1 %}
-  {% set j2 = state.j2 %}
-  {% if state.gagnant %}
-    <div class="winner">🎉 Bravo {{ state.gagnant }} a gagné !</div>
-  {% endif %}
+<body class="bg">
+  <header class="topbar">
+    <div>Tour: {{ 'Joueur 1' if state.turn==1 else 'Joueur 2' }}</div>
+    <div><a class="btn small" href="{{ url_for('index') }}">Revenir accueil</a></div>
+  </header>
 
-  <div class="wrap">
-    <!-- LEFT: J1 -->
-    <div class="card">
-      <h2>{{ j1.nom }}</h2>
-      <div class="pokemon-box">
-        <!-- image placeholder -->
-        <div style="text-align:center;">
-          <div style="font-weight:bold">{{ j1.actuel[0] }}</div>
-          <div style="font-size:12px;color:#666">{{ j1.actuel[2] }}</div>
+  <main class="arena">
+    <!-- LEFT: Player 1 -->
+    <section class="card large">
+      <h3>{{ state.p1.name }}</h3>
+
+      {% if state.p1.current %}
+        <div class="poke-box">
+          <div class="poke-name">{{ state.p1.current.name }}</div>
+          <div class="hpbar">
+            <div class="hpbar-fill" style="width: {{ (state.p1.current.hp / state.p1.current.max_hp) * 100 }}%"></div>
+          </div>
+          <div class="hp-text">{{ state.p1.current.hp }} / {{ state.p1.current.max_hp }} PV</div>
+          <div class="meta">Type: {{ state.p1.current.type }} — Faiblesse: {{ state.p1.current.weakness }}</div>
+          <div class="moves">
+            <div>⚔ {{ state.p1.current.moves[0].name }} : {{ state.p1.attack_value }} dmg</div>
+            <div>💚 {{ state.p1.current.moves[1].name }} : +{{ state.p1.heal_value }} PV</div>
+          </div>
         </div>
-      </div>
-      <div class="stats">
-        <p><b>PV :</b> {{ j1.actuel[1] }}</p>
-        <p><b>Faiblesse :</b> {{ j1.actuel[4] }}</p>
-        <p><b>Attaque :</b> {{ j1.actuel[3][0][0] }} ({{ j1.actuel[3][0][1] }} dmg)</p>
-        <p><b>Soin :</b> {{ j1.actuel[3][1][0] }} (+{{ j1.actuel[3][1][1] }})</p>
-        <p><b>Pokémons restants :</b> {{ j1.vivants }}</p>
-      </div>
+      {% else %}
+        <div class="empty">Plus de Pokémon</div>
+      {% endif %}
 
       <div class="actions">
-        {% if state.tour == "J1" and not state.gagnant %}
+        {% if state.turn == 1 and not state.winner %}
           <form method="post" action="{{ url_for('action') }}">
-            <input type="hidden" name="player" value="J1">
-            <input type="hidden" name="action" value="1">
-            <button class="atk" type="submit">⚡ Attaquer ({{ j1.actuel[3][0][0] }}) = {{ j1.actuel[3][0][1] }} dmg{% if j1.actuel[2] == j2.actuel[4] %} +20 (faiblesse){% endif %}</button>
+            <input type="hidden" name="action" value="attack">
+            <button class="btn danger" type="submit">⚔ Attaquer ({{ state.p1.attack_value }} dmg)</button>
           </form>
           <form method="post" action="{{ url_for('action') }}">
-            <input type="hidden" name="player" value="J1">
-            <input type="hidden" name="action" value="2">
-            <button class="heal" type="submit">💖 Soigner ({{ j1.actuel[3][1][0] }}) = +{{ j1.actuel[3][1][1] }} PV</button>
+            <input type="hidden" name="action" value="heal">
+            <button class="btn success" type="submit">💚 Soigner (+{{ state.p1.heal_value }})</button>
           </form>
           <form method="post" action="{{ url_for('action') }}">
-            <input type="hidden" name="player" value="J1">
-            <input type="hidden" name="action" value="3">
-            <!-- no choix_index here -> server will redirect to choose page -->
-            <button class="chg" type="submit">🔄 Changer de Pokémon</button>
+            <input type="hidden" name="action" value="change">
+            <button class="btn info" type="submit">🔁 Changer de Pokémon</button>
           </form>
         {% else %}
-          <div style="color:#888; font-size:14px; margin-top:6px;">Attente du tour</div>
+          <div class="muted">En attente du tour</div>
         {% endif %}
       </div>
-    </div>
 
-    <div class="center-space">
-      <!-- centre vide pour image future -->
-      <div>(image Pokémon)</div>
-    </div>
+      <div class="remaining">Pokémons restants : {{ state.p1.alive_count }}</div>
+    </section>
 
-    <!-- RIGHT: J2 -->
-    <div class="card">
-      <h2>{{ j2.nom }}</h2>
-      <div class="pokemon-box">
-        <div style="text-align:center;">
-          <div style="font-weight:bold">{{ j2.actuel[0] }}</div>
-          <div style="font-size:12px;color:#666">{{ j2.actuel[2] }}</div>
+    <!-- RIGHT: Player 2 -->
+    <section class="card large">
+      <h3>{{ state.p2.name }}</h3>
+
+      {% if state.p2.current %}
+        <div class="poke-box">
+          <div class="poke-name">{{ state.p2.current.name }}</div>
+          <div class="hpbar">
+            <div class="hpbar-fill" style="width: {{ (state.p2.current.hp / state.p2.current.max_hp) * 100 }}%"></div>
+          </div>
+          <div class="hp-text">{{ state.p2.current.hp }} / {{ state.p2.current.max_hp }} PV</div>
+          <div class="meta">Type: {{ state.p2.current.type }} — Faiblesse: {{ state.p2.current.weakness }}</div>
+          <div class="moves">
+            <div>⚔ {{ state.p2.current.moves[0].name }} : {{ state.p2.attack_value }} dmg</div>
+            <div>💚 {{ state.p2.current.moves[1].name }} : +{{ state.p2.heal_value }} PV</div>
+          </div>
         </div>
-      </div>
-      <div class="stats">
-        <p><b>PV :</b> {{ j2.actuel[1] }}</p>
-        <p><b>Faiblesse :</b> {{ j2.actuel[4] }}</p>
-        <p><b>Attaque :</b> {{ j2.actuel[3][0][0] }} ({{ j2.actuel[3][0][1] }} dmg)</p>
-        <p><b>Soin :</b> {{ j2.actuel[3][1][0] }} (+{{ j2.actuel[3][1][1] }})</p>
-        <p><b>Pokémons restants :</b> {{ j2.vivants }}</p>
-      </div>
+      {% else %}
+        <div class="empty">Plus de Pokémon</div>
+      {% endif %}
 
       <div class="actions">
-        {% if state.tour == "J2" and not state.gagnant %}
+        {% if state.turn == 2 and not state.winner %}
           <form method="post" action="{{ url_for('action') }}">
-            <input type="hidden" name="player" value="J2">
-            <input type="hidden" name="action" value="1">
-            <button class="atk" type="submit">⚡ Attaquer ({{ j2.actuel[3][0][0] }}) = {{ j2.actuel[3][0][1] }} dmg{% if j2.actuel[2] == j1.actuel[4] %} +20 (faiblesse){% endif %}</button>
+            <input type="hidden" name="action" value="attack">
+            <button class="btn danger" type="submit">⚔ Attaquer ({{ state.p2.attack_value }} dmg)</button>
           </form>
           <form method="post" action="{{ url_for('action') }}">
-            <input type="hidden" name="player" value="J2">
-            <input type="hidden" name="action" value="2">
-            <button class="heal" type="submit">💖 Soigner ({{ j2.actuel[3][1][0] }}) = +{{ j2.actuel[3][1][1] }} PV</button>
+            <input type="hidden" name="action" value="heal">
+            <button class="btn success" type="submit">💚 Soigner (+{{ state.p2.heal_value }})</button>
           </form>
           <form method="post" action="{{ url_for('action') }}">
-            <input type="hidden" name="player" value="J2">
-            <input type="hidden" name="action" value="3">
-            <button class="chg" type="submit">🔄 Changer de Pokémon</button>
+            <input type="hidden" name="action" value="change">
+            <button class="btn info" type="submit">🔁 Changer de Pokémon</button>
           </form>
         {% else %}
-          <div style="color:#888; font-size:14px; margin-top:6px;">Attente du tour</div>
+          <div class="muted">En attente du tour</div>
         {% endif %}
       </div>
-    </div>
-  </div>
+
+      <div class="remaining">Pokémons restants : {{ state.p2.alive_count }}</div>
+    </section>
+  </main>
 </body>
 </html>
