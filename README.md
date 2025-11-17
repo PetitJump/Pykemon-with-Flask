@@ -1,4 +1,5 @@
 # Pokemon Flask
+Projet coder avec l'IA a partir de mon code sur le terminal coder par PetitJump: [Code GitHub](https://github.com/PetitJump/Pykemon-1v1)
 Ce projet est une petite application web construite avec Flask, simulant un combat Pokémon en tour par tour.
 Chaque joueur reçoit 3 Pokémon tirés aléatoirement depuis data.json, et peut attaquer, soigner ou changer de Pokémon pendant la partie.
 
